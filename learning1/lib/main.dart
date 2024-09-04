@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:learning1/firebase_options.dart';
 import 'package:learning1/views/loginview.dart';
+import 'package:learning1/views/registerview.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +13,7 @@ void main() {
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       useMaterial3: true,
     ),
-    home: const LoginView(),
+    home: const HomePage(),
   ));
 }
 
@@ -39,6 +40,8 @@ class HomePage extends StatelessWidget {
                   print("You are verified");
                 } else {
                   print("please verify your email");
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const VerifyEmail()));
                 }
                 return const Text("Done");
               default:
@@ -46,5 +49,29 @@ class HomePage extends StatelessWidget {
             }
           },
         ));
+  }
+}
+
+class VerifyEmail extends StatefulWidget {
+  const VerifyEmail({super.key});
+
+  @override
+  State<VerifyEmail> createState() => _VerifyEmailState();
+}
+
+class _VerifyEmailState extends State<VerifyEmail> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text("Verify Email")),
+        body: Column(children: [
+          const Text("Please verify your email"),
+          TextButton(
+              onPressed: () async {
+                final user = FirebaseAuth.instance.currentUser;
+                await user?.sendEmailVerification();
+              },
+              child: const Text("Send email verification"))
+        ]));
   }
 }
